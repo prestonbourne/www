@@ -26,6 +26,7 @@ const runAsync = async () => {
     try {
       console.log(`[SCRIPT RUNNER]: running '${file}'`);
       await defaultFunc({ env: process.env });
+      console.log(`[SCRIPT RUNNER]: finished '${file}'`);
     } catch (e) {
       console.error(
         `[SCRIPT RUNNER]: failed to execute script '${file}'`
