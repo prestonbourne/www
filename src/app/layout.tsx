@@ -58,8 +58,8 @@ export default function RootLayout({
               className="2xl:col-span-1 hidden 2xl:block"
             ></div>
             <div className="2xl:col-span-2 px-4 2xl:px-0">
-              <div className="max-w-screen-md mx-auto">
-                {children} <Footer />{" "}
+              <div className="max-w-(--breakpoint-md) mx-auto">
+                {children} <Footer className="text-xs md:text-base" />{" "}
               </div>
             </div>
             <div className="2xl:col-span-1 hidden 2xl:block">

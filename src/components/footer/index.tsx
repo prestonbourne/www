@@ -15,7 +15,7 @@ export const Footer = ({ className, ...props }: ComponentProps<"footer">) => {
       <Divider className={"mb-4"} />
       <div className="flex flex-row justify-between items-center">
         <GithubIcon />
-        <p className="text-sm">
+        <p >
           © {year} Preston Bourne.{" "}
           <span className="hidden sm:inline">All Rights Reserved.</span>
         </p>

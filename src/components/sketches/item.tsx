@@ -28,7 +28,7 @@ export const SketchItem: React.FC<SketchItemsProps> = ({ sketch }) => {
         onClick={handleClick}
       >
         <motion.div
-          className="relative w-full flex-grow"
+          className="relative w-full grow"
           key={`sketch-img-${sketch.id}-img`}
         >
           <Image

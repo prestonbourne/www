@@ -46,10 +46,10 @@ export const SketchDialog: React.FC = ({}) => {
           key={`sketch-${activeSketch.id}`}
           onCancel={handleCancel}
           className={cx(
-            "max-h-[60vh] max-w-none aspect-[9/16] w-[calc(100vw-32px)]", // mobile
-            "md:w-[90vw] md:aspect-video md:max-w-screen-xl mx-auto",
+            "max-h-[60vh] max-w-none aspect-9/16 w-[calc(100vw-32px)]", // mobile
+            "md:w-[90vw] md:aspect-video md:max-w-(--breakpoint-xl) mx-auto",
             "top-24 flex flex-col backdrop:bg-transparent",
-            "bg-gray-100/90 dark:bg-gray-900/85 backdrop-blur-sm",
+            "bg-gray-100/90 dark:bg-gray-900/85 backdrop-blur-xs",
             "p-2 rounded-lg shadow-sheen overflow-hidden"
           )}
         >

@@ -62,7 +62,7 @@ export const Flexbar = () => {
     `backdrop-blur-md overflow-hidden`,
     `shadow-inner-shine shadow-dense dark:border-slate-100/20 border`,
     `transition-all`,
-    !hasHydrated && `opacity-0 -translate-y-2 blur`,
+    !hasHydrated && `opacity-0 -translate-y-2 blur-sm`,
     // remove these styles when making dynamic and ensure pos fixed
     `absolute top-16 right-2`
   )

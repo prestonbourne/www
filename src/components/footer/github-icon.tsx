@@ -13,7 +13,7 @@ const GithubIcon: React.FC = () => {
 
   return (
     <Link
-      className="text-sm flex flex-row items-center"
+      className="flex flex-row items-center"
       href="https://github.com/prestonbourne/www-2024"
       rel="noreferrer"
       target="_blank"

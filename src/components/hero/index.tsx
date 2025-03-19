@@ -7,7 +7,7 @@ import { PersonLink } from "@/components/person-link";
 
 export function Hero() {
   return (
-    <header className="max-w-screen-sm leading-none">
+    <header className="max-w-(--breakpoint-sm) leading-none">
       <Heading level={1}>preston bourne</Heading>
       <Body className={"my-2"}>(web ∧ graphics) engineer</Body>
       <Body className={"mb-2"}>
@@ -15,7 +15,7 @@ export function Hero() {
         <PersonLink name="hashicorp" url="https://www.hashicorp.com" />{" "}
         engineer, responsible for a suite of high traffic web applications.
       </Body>
-      <div className="flex flex-row gap-3 my-7 items-center">
+      <div className="flex flex-row gap-3 my-7 items-center text-sm sm:text-base">
         <Links />
         <span className="text-foreground-muted">|</span>
         <Clock />

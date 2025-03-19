@@ -14,7 +14,7 @@ export const PostGridItem: React.FC<PostGridItemProps> = ({ post }) => {
 
   const containerClass = cx(
     'cursor-pointer block shadow-sheen overflow-hidden',
-    'relative rounded-sm overflow-hidden max-h-96',
+    'relative rounded-xs overflow-hidden max-h-96',
     'group/card'
   )
 
@@ -34,7 +34,7 @@ export const PostGridItem: React.FC<PostGridItemProps> = ({ post }) => {
 
   return (
     <NextLink className={containerClass} href={link} target={linkTarget}>
-      <div className="relative w-full h-fit rounded-sm overflow-hidden">
+      <div className="relative w-full h-fit rounded-xs overflow-hidden">
         <ServerImage
           loading='eager'
           src={post.media?.image!}
@@ -47,7 +47,7 @@ export const PostGridItem: React.FC<PostGridItemProps> = ({ post }) => {
         />
         <div
           className={cx(
-            '[background-image:linear-gradient(to_top,theme(colors.black),transparent)]',
+            '[background-image:linear-gradient(to_top,var(--color-black),transparent)]',
             'group-hover/card:opacity-70 opacity-0 transition-all ease-in duration-150',
             'w-full h-full absolute top-0 left-0'
           )}

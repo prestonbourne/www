@@ -18,14 +18,14 @@ export const ButtonToggle = ({
   onChange,
 }: ButtonToggleProps) => {
   return (
-    <span className="flex w-fit items-center gap-0.5 rounded surface p-0.5">
+    <span className="flex w-fit items-center gap-0.5 rounded-sm surface p-0.5">
       {options.map(({ label, icon, value: optionValue }) => (
         <button
           type="button"
           key={label}
           onClick={() => onChange(optionValue)}
           className={cx(
-            "transition-all flex h-6 w-6 items-center justify-center rounded-sm hover:brightness-120",
+            "transition-all flex h-6 w-6 items-center justify-center rounded-xs hover:brightness-120",
             {
               "text-action border-action bg-action/10": value === optionValue,
             }

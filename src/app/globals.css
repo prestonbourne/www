@@ -1,68 +1,168 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-black: #000;
+  --color-white: #fff;
+
+  --color-purple-50: #faf5ff;
+  --color-purple-100: #f3e8ff;
+  --color-purple-200: #e9d5ff;
+  --color-purple-300: #d8b4fe;
+  --color-purple-400: #c084fc;
+  --color-purple-500: #a855f7;
+  --color-purple-600: #9333ea;
+  --color-purple-700: #7e22ce;
+  --color-purple-800: #6b21a8;
+  --color-purple-900: #581c87;
+  --color-purple-950: #3b0764;
+
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+  --color-slate-950: #020617;
+
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #1a1a1a;
+  --color-gray-950: #0f0f0f;
+
+  --color-background: rgb(var(--background));
+  --color-background-surface: rgb(var(--background-surface));
+
+  --color-foreground: rgb(var(--foreground));
+  --color-foreground-muted: rgb(var(--foreground-muted));
+  --color-foreground-highlight: rgb(var(--foreground-highlight));
+
+  --color-action: rgb(var(--action));
+  --color-callout-info: rgb(var(--callout-info));
+
+  --shadow-dense: var(--shadow-dense);
+  --shadow-inner-shine: var(--shadow-inner-shine);
+  --shadow-sheen: var(--shadow-sheen);
+  --shadow-sharp: var(--shadow-sharp);
+}
 
 /*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
+
+@utility text-balance {
+  text-wrap: balance;
+}
+
+@utility surface {
+  border: 1px solid rgb(var(--foreground-muted) / 0.3);
+  border-radius: var(--radius-md);
+  background-color: var(--background-surface);
+}
+
+@utility sheen-ring {
+  --width: 1px;
+  --upper-ring-color: 180 197 202;
+  --base-color: rgb(var(--upper-ring-color) / 0.5);
+
+  --tw-ring-shadow: 0 0 0 var(--width) var(--base-color);
+  --upper-ring: 0 -1px 0 rgb(var(--upper-ring-color));
+
+  box-shadow: var(--upper-ring), var(--tw-ring-shadow), var(--shadow-dense);
+}
+
+@layer utilities {
+  /*
   1. Use a more-intuitive box-sizing model.
 */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-/*
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  /*
   2. Remove default margin
 */
-* {
-  margin: 0;
-}
-/*
+  * {
+    margin: 0;
+  }
+  /*
   Typographic tweaks!
   3. Add accessible line-height
   4. Improve text rendering
 */
-body {
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-}
-/*
+  body {
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  /*
   5. Improve media defaults
 */
-img,
-picture,
-video,
-canvas,
-svg {
-  display: block;
-  max-width: 100%;
-}
-/*
+  img,
+  picture,
+  video,
+  canvas,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+  /*
   6. Remove built-in form typography styles
 */
-input,
-button,
-textarea,
-select {
-  font: inherit;
-}
-/*
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+  }
+  /*
   7. Avoid text overflows
 */
-p,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  overflow-wrap: break-word;
-}
-/*
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    overflow-wrap: break-word;
+  }
+  /*
   8. Create a root stacking context
 */
-#root,
-#__next {
-  isolation: isolate;
+  #root,
+  #__next {
+    isolation: isolate;
+  }
 }
 
 @layer base {
@@ -114,33 +214,8 @@ h6 {
   textarea:focus,
   a:focus {
     outline: 3px solid rgb(var(--action));
-    outline-offset: theme("spacing.1");
-    border-radius: theme("borderRadius.sm");
-  }
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-}
-
-@layer components {
-  .surface {
-    border: 1px solid rgb(var(--foreground-muted) / 0.3);
-    border-radius: theme("borderRadius.md");
-    background-color: var(--background-surface);
-  }
-
-  .sheen-ring {
-    --width: 1px;
-    --upper-ring-color: 180 197 202;
-    --base-color: rgb(var(--upper-ring-color) / 0.5);
-
-    --tw-ring-shadow: 0 0 0 var(--width) var(--base-color);
-    --upper-ring: 0 -1px 0 rgb(var(--upper-ring-color));
-
-    box-shadow: var(--upper-ring), var(--tw-ring-shadow), var(--shadow-dense);
+    outline-offset: --spacing(1);
+    border-radius: var(--radius-sm);
   }
 }
 
@@ -250,7 +325,7 @@ html {
 * {
 
   figure[data-rehype-pretty-code-figure] {
-    margin: theme("spacing.2") 0 theme("spacing.10") 0;
+    margin: --spacing(2) 0 --spacing(10) 0;
     width: 100%;
     overflow: hidden;
     @apply surface;

@@ -4,7 +4,7 @@ import { cx } from "class-variance-authority";
 export const PersonLink = ({ name, url }: { name: string; url: string }) => {
 
     const linkClasses = cx(
-        "bg-action/10 rounded-sm",
+        "bg-action/10 rounded-xs",
         "text-action",
         "transition-colors hover:brightness-110",
     )
