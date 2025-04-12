@@ -1,11 +1,13 @@
 .banner {
   --banner-height-mobile: 80px;
   --banner-height-desktop: 120px;
-  --circles-size: 384px;
+  --circles-size: 584px;
   --circle-float-duration: 12s;
   --circle-delay-multiplier: -0.3s;
   --circle-float-top: -80px;
   --circle-float-down: 60px;
+  --circle-pos-left: 50%;
+
 
   width: 100%;
   height: var(--banner-height-mobile);
@@ -16,6 +18,7 @@
   overflow: hidden;
 }
 
+/* blur out */
 .banner::after {
   content: '';
   position: absolute;
@@ -27,6 +30,20 @@
   pointer-events: none;
 }
 
+.circlesContainer {
+  width: var(--circles-size);
+  height: var(--circles-size);
+  position: absolute;
+  left: var(--circle-pos-left);
+  top: 50%;
+  transform: translateY(-50%) rotateX(50deg) rotateY(-15deg);
+  transform-style: preserve-3d;
+  display: grid;
+  place-items: center;
+}
+
+/* min-width: Styles apply when viewport width is GREATER than specified value
+   This means (min-width: 768px) applies for screens 768px and WIDER */
 @media (min-width: 768px) {
   .banner {
     height: var(--banner-height-desktop);
@@ -36,16 +53,12 @@
   }
 }
 
-.circlesContainer {
-  width: var(--circles-size);
-  height: var(--circles-size);
-  position: absolute;
-  right: 15%;
-  top: 50%;
-  transform: translateY(-50%) rotateX(50deg) rotateY(-15deg);
-  transform-style: preserve-3d;
-  display: grid;
-  place-items: center;
+/* max-width: Styles apply when viewport width is LESS than specified value  
+   This means (max-width: 768px) applies for screens 768px and NARROWER */
+@media (max-width: 768px) {
+  .circlesContainer {
+    left: 20%;
+  }
 }
 
 .circle {
@@ -60,13 +73,16 @@
   0% {
     transform: translateY(var(--circle-float-down));
     border-color: var(--color-foreground-muted);
+    opacity: 0.1;
   }
   50% {
     transform: translateY(var(--circle-float-top));
     border-color: var(--color-action);
+    opacity: 0.5;
   }
   100% {
     transform: translateY(var(--circle-float-down));
     border-color: var(--color-foreground-muted);
+    opacity: 0.1;
   }
 }
