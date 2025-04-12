@@ -7,23 +7,14 @@ export interface NextPageProps<SlugType = string> {
 }
 
 
-export type PostType = 'projects' | 'sketches' | 'notes';
-
 
 export type Post = {
-  type: PostType;
   title: string;
   slug: string;
   content: string;
   tags?: string[];
   description?: string;
   externalURL?: string;
-
-  author?: {
-    name?: string;
-    link?: string;
-    handle?: string;
-  };
 
   publishedAt?: string;
   updatedAt?: string;
@@ -48,19 +39,5 @@ export type Post = {
     comments?: number;
   };
 
-  related?: {
-    media?: string[];
-    links?: string[];
-    posts?: string[];
-  };
-
-  social?: {
-    twitter?: string;
-    facebook?: string;
-    linkedin?: string;
-    instagram?: string;
-    youtube?: string;
-    pinterest?: string;
-    others?: string[];
-  };
+  related: Post['slug'][];
 };
