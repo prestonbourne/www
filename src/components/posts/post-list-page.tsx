@@ -1,11 +1,10 @@
 import { HomeSection } from "@/components/home-section";
 import { getPostsByCategory } from "@/lib/posts";
-import { PostType } from "@/lib/types";
 import postTypes from "@/post-types.json";
 import { NextPageProps } from "@/lib/types";
 
 type PostListPageProps = NextPageProps & {
-  postType: PostType;
+  postType: string;
 };
 
 export async function PostListPage({ postType }: PostListPageProps) {
