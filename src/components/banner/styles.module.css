@@ -13,7 +13,6 @@
   height: var(--banner-height-mobile);
   background: linear-gradient(to bottom, var(--color-foreground) / 0.1, var(--color-background));
   border-bottom: 1px solid var(--color-foreground) / 0.1;
-  margin-bottom: 1rem;
   position: relative;
   overflow: hidden;
 }
@@ -67,6 +66,37 @@
   border-radius: 9999px;
   animation: float var(--circle-float-duration) ease-in-out infinite;
   animation-delay: calc(var(--index) * var(--circle-delay-multiplier));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .circle {
+    animation: none;
+  }
+  .circle:nth-child(1) {
+    transform: translateY(var(--circle-float-down));
+    border-color: var(--color-foreground-muted);
+    opacity: 0.1;
+  }
+  .circle:nth-child(4n) {
+    transform: translateY(calc(var(--circle-float-down) * 0.75 + var(--circle-float-top) * 0.25));
+    border-color: color-mix(in srgb, var(--color-foreground-muted) 75%, var(--color-action) 25%);
+    opacity: 0.2;
+  }
+  .circle:nth-child(4n + 2) {
+    transform: translateY(calc(var(--circle-float-down) * 0.5 + var(--circle-float-top) * 0.5));
+    border-color: color-mix(in srgb, var(--color-foreground-muted) 50%, var(--color-action) 50%);
+    opacity: 0.3;
+  }
+  .circle:nth-child(4n + 3) {
+    transform: translateY(calc(var(--circle-float-down) * 0.25 + var(--circle-float-top) * 0.75));
+    border-color: color-mix(in srgb, var(--color-foreground-muted) 25%, var(--color-action) 75%);
+    opacity: 0.4;
+  }
+  .circle:nth-child(17) {
+    transform: translateY(var(--circle-float-top));
+    border-color: var(--color-action);
+    opacity: 0.5;
+  }
 }
 
 @keyframes float {

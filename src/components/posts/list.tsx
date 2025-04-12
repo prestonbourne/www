@@ -1,12 +1,11 @@
 import { getPostsByCategory } from "@/lib/posts";
 import { Link } from "@/components/typography/link";
 import React from "react";
-import type { PostType } from "@/lib/types";
 import { trimIsoToDate } from "@/lib";
 import * as FadeIn from "@/components/motion";
 
 export type PostListProps = {
-  category: PostType;
+  category: string;
 };
 
 export const PostList = async ({ category }: PostListProps) => {
