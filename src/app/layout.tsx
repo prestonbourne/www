@@ -6,6 +6,7 @@ import { Metadata } from "next";
 import { cx } from "class-variance-authority";
 import { Providers } from "@/components/providers";
 import { Footer } from "@/components/footer";
+import { Banner } from "@/components/banner";
 import { VercelToolbar } from "@vercel/toolbar/next";
 import { TableOfContents } from "@/components/posts/table-of-contents";
 import { TWEAK_PANE_CONTAINER_ID } from "@/lib/sketches";
@@ -50,7 +51,8 @@ export default function RootLayout({
         )}
       >
         <Providers>
-          <div className="pt-12 app-grid mx-auto max-w-7xl">
+          <Banner />
+          <div className="app-grid mx-auto max-w-7xl">
             {/* empty div to push the table of contents to the right in 3 column layout */}
             <div>{/* site config */}</div>
             <div>
