@@ -9,9 +9,7 @@ export function Hero() {
   return (
     <header className="max-w-(--breakpoint-sm) leading-none">
       <Heading level={1}>preston bourne</Heading>
-      <Body className={"my-2"}>(web ∧ graphics) engineer</Body>
-      <Body className={"mb-2"}>
-        currently a{" "}
+      <Body className={"my-2"}>
         <PersonLink name="hashicorp" url="https://www.hashicorp.com" />{" "}
         engineer, responsible for a suite of high traffic web applications.
       </Body>
@@ -29,17 +27,17 @@ export function Links() {
     <>
       <Body>
         <Link href="https://x.com/prestonb0urne" target="_blank">
-          X
+          x
         </Link>
       </Body>
       <Body>
         <Link href="https://www.linkedin.com/in/prestonbourne/" target="_blank">
-          LinkedIn
+          linkedin
         </Link>
       </Body>
       <Body>
         <Link href="https://github.com/prestonbourne" target="_blank">
-          Github
+          github
         </Link>
       </Body>
     </>
