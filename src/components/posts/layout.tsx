@@ -5,24 +5,22 @@ import { CalendarIcon, ClockIcon } from "@radix-ui/react-icons";
 import { Divider } from "@/components/divider";
 import { Heading } from "@/components/typography";
 import { Paragraph as Body } from "@/components/typography/paragraph";
-import { getPostsByCategory } from "@/lib/posts";
+import { getPosts } from "@/lib/posts";
 import { notFound } from "next/navigation";
-import { PostType } from "@/lib/types";
-import { MDX } from "@/components/markdown";
 import { ViewCounter } from "./view-counter";
 
 type PostPageProps = NextPageProps & {
-  postType: PostType;
+  category: string;
 };
 
-export async function PostPage({ params, postType }: PostPageProps) {
+export async function PostPage({ params, category }: PostPageProps) {
   const currentSlug = params.slug;
-  const posts = getPostsByCategory(postType);
+  const posts = await getPosts();
   const post = posts.find((post) => post.slug === currentSlug);
   if (!post) return notFound();
 
   return (
-    <article className="mx-auto">
+    <>
       <header>
         <Heading level={1}>{post.title}</Heading>
         <Body className="text-sm py-2 text-sub-text">{post.description}</Body>
@@ -45,9 +43,6 @@ export async function PostPage({ params, postType }: PostPageProps) {
         </div>
       </header>
       <Divider className="mt-4 mb-7" />
-      <main>
-        <MDX source={post.content} />
-      </main>
-    </article>
+    </>
   );
 }

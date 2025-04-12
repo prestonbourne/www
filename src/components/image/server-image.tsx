@@ -16,7 +16,7 @@ const getStreamImageSize = async (stream: IncomingMessage) => {
     try {
       const buf = Buffer.concat(chunks)
       // stop requesting data after dimensions are known
-      const size = sizeOf(buf)
+      const size = sizeOf(new Uint8Array(buf.buffer))
       // if we have enough data for size, we have enough to blur, important that this is called after to not repeat network requests
       const { base64 } = await getPlaiceholder(buf)
       return { size, base64 }
@@ -62,7 +62,7 @@ const fetchImageInfoFromFile = async (imagePath: string) => {
   try {
     const img = await readFile(imagePath)
     const { base64 } = await getPlaiceholder(img)
-    return { size: sizeOf(img), base64 }
+    return { size: sizeOf(new Uint8Array(img.buffer)), base64 }
   } catch (error) {
     console.error(`Error while reading image with path: ${imagePath}`)
     console.error(error)

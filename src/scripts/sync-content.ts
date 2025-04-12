@@ -1,4 +1,4 @@
-import { getPostsByCategory } from "@/lib/posts";
+import { getPosts } from "@/lib/posts";
 import { createAdminClient } from "@/lib/supabase/server-client";
 import { PostType } from "@/lib/types";
 import { inspect } from "node:util";
@@ -10,7 +10,7 @@ export default async function runner ({ env }: { env: typeof process.env }) {
   const supabase = createAdminClient();
 
   for (const type of TYPES) {
-    const localPosts = getPostsByCategory(type);
+    const localPosts = getPosts(type);
     for (const post of localPosts) {
       const { error } = await supabase.from("posts").upsert(
         {

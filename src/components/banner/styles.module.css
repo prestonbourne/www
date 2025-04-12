@@ -9,7 +9,7 @@
   --circle-pos-left: 50%;
 
 
-  width: 100%;
+  width: 100vw;
   height: var(--banner-height-mobile);
   background: linear-gradient(to bottom, var(--color-foreground) / 0.1, var(--color-background));
   border-bottom: 1px solid var(--color-foreground) / 0.1;
@@ -103,16 +103,16 @@
   0% {
     transform: translateY(var(--circle-float-down));
     border-color: var(--color-foreground-muted);
-    opacity: 0.1;
+    opacity: 0.05;
   }
   50% {
     transform: translateY(var(--circle-float-top));
     border-color: var(--color-action);
-    opacity: 0.5;
+    opacity: 0.7;
   }
   100% {
     transform: translateY(var(--circle-float-down));
     border-color: var(--color-foreground-muted);
-    opacity: 0.1;
+    opacity: 0.05;
   }
 }

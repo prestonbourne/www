@@ -1,10 +1,10 @@
 import { MetadataRoute } from "next";
-import { getPostsByCategory } from "@/lib/posts";
+import { getPosts } from "@/lib/posts";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const projectPosts = getPostsByCategory("projects");
-  const sketchPosts = getPostsByCategory("sketches");
-  const notePosts = getPostsByCategory("notes");
+  const projectPosts = getPosts("projects");
+  const sketchPosts = getPosts("sketches");
+  const notePosts = getPosts("notes");
   const allPosts = [...projectPosts, ...sketchPosts, ...notePosts];
 
   const allPostsEntries: MetadataRoute.Sitemap = allPosts.map((post: any) => {

@@ -16,7 +16,7 @@ const COLUMNS = 2;
 const BASE_ITEM_SIZE = "1fr 1fr";
 const TOTAL_GRID_SIZE = 12;
 
-export function DynamicGrid({ posts }: DynamicGridProps) {
+export function DesktopDynamicPostGrid({ posts }: DynamicGridProps) {
   const [hovered, setHovered] = useState<{ row: number; col: number } | null>(
     null
   );
@@ -45,14 +45,14 @@ export function DynamicGrid({ posts }: DynamicGridProps) {
   };
 
   return (
-    <div
+    <ul
       style={{
         // @ts-expect-error - custom css variables
         "--grid-rows": getRowSizes(),
         "--grid-cols": getColSizes(),
         "--gap": `${gapSize}px`,
       }}
-      className="w-full grid h-[400px] transition-all duration-300 ease-in-out [grid-template-rows:var(--grid-rows)] [grid-template-columns:var(--grid-cols)] [gap:var(--gap)]"
+      className="w-full hidden md:grid flex-1 transition-all duration-300 ease-in-out [grid-template-rows:var(--grid-rows)] [grid-template-columns:var(--grid-cols)] [gap:var(--gap)]"
     >
       {posts.map((post, index) => {
         const row = Math.floor(index / COLUMNS);
@@ -67,10 +67,9 @@ export function DynamicGrid({ posts }: DynamicGridProps) {
           />
         );
       })}
-    </div>
+    </ul>
   );
 }
-
 
 type ItemProps = {
   post: Post;
@@ -102,8 +101,7 @@ export const Item: React.FC<ItemProps> = ({
     "group-hover/card:opacity-100 group-hover/card:translate-y-0"
   );
 
-
-  const link = post.externalURL || post.slug;
+  const link = post.externalURL || `/${post.type}/${post.slug}`;
 
   return (
     <motion.li
@@ -112,7 +110,10 @@ export const Item: React.FC<ItemProps> = ({
       onMouseLeave={onMouseLeave}
     >
       {link && (
-        <NextLink href={link!} className="absolute block w-full h-full z-10" ></NextLink>
+        <NextLink
+          href={link!}
+          className="absolute block w-full h-full z-10"
+        ></NextLink>
       )}
       <div className="relative w-full h-full">
         <Image
@@ -138,3 +139,18 @@ export const Item: React.FC<ItemProps> = ({
     </motion.li>
   );
 };
+
+export function MobilePostGrid({ posts }: DynamicGridProps) {
+  return (
+    <ul className="w-full h-full grid grid-cols-1 gap-4 md:hidden flex-1">
+      {posts.map((post) => (
+        <Item
+          key={post.slug}
+          post={post}
+          onMouseEnter={() => {}}
+          onMouseLeave={() => {}}
+        />
+      ))}
+    </ul>
+  );
+}

@@ -85,8 +85,8 @@ const TabsTrigger = React.forwardRef<
   <TabsPrimitive.Trigger
     ref={ref}
     className={cx(
-      "inline-flex items-center justify-center whitespace-nowrap px-1 py-2 text-sm transition-colors",
-      "text-foreground-muted hover:text-foreground data-[state=active]:text-action",
+      "inline-flex items-center justify-center whitespace-nowrap px-1 py-2 transition-colors",
+      "text-foreground hover:text-foreground data-[state=active]:text-action",
       "focus-visible:outline-none focus:outline-none cursor-pointer",
       className
     )}

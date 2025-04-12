@@ -1,48 +1,32 @@
-import { getPostsByCategory } from "@/lib/posts";
 import { Link } from "@/components/typography/link";
 import React from "react";
 import { trimIsoToDate } from "@/lib";
 import * as FadeIn from "@/components/motion";
+import { Post } from "@/lib/types";
 
 export type PostListProps = {
-  category: string;
+  posts: Post[];
 };
 
-export const PostList = async ({ category }: PostListProps) => {
-  const posts = getPostsByCategory(category).sort((a, b) => {
-    return (
-      new Date(b.publishedAt || Date.now()).getTime() -
-      new Date(a.publishedAt || Date.now()).getTime()
-    );
-  });
-
-  if (posts.length === 0) {
-    return null;
-  }
-
+export const PostList = ({ posts }: PostListProps) => {
   return (
-    <FadeIn.Container>
-    <ul className="flex flex-col">
-
-        {posts.map((post) => {
-          const href = post.externalURL ||`/${category}/${post.slug}`;
-          return (
-            <FadeIn.Item key={post.slug}>
-              <li
-                key={post.slug}
-                className="flex flex-row justify-between items-center my-2"
+    <FadeIn.List className="flex-1 h-full flex flex-col gap-2">
+      {posts.map((post) => {
+        const href = post.externalURL || `/${post.type}/${post.slug}`;
+        return (
+          <FadeIn.Item
+            key={post.slug}
+            className="flex flex-row justify-between items-center my-2"
           >
             <Link href={href}>
-              <p>{post.title}</p>
+              <p className="truncate max-w-[240px] md:max-w-[520px]">{post.title}</p>
             </Link>
             <p className="mt-0 text-foreground-muted text-xs">
               {post.publishedAt ? trimIsoToDate(post.publishedAt) : "WIP"}
-                </p>
-              </li>
-            </FadeIn.Item>
-          );
-        })}
-        </ul>
-      </FadeIn.Container>
+            </p>
+          </FadeIn.Item>
+        );
+      })}
+    </FadeIn.List>
   );
 };

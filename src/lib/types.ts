@@ -6,18 +6,22 @@ export interface NextPageProps<SlugType = string> {
   searchParams?: { [key: string]: string | string[] | undefined };
 }
 
-
-
-export type Post = {
+export type PostNextMetadata = {
   title: string;
-  slug: string;
-  content: string;
-  tags?: string[];
-  description?: string;
-  externalURL?: string;
-
+  description: string;
   publishedAt?: string;
   updatedAt?: string;
+  imageURL?: string;
+  externalURL?: string;
+  tags?: string[];
+}
+
+export type PostType = "notes" | "work";
+
+export type Post = PostNextMetadata & {
+  slug: string;
+  type: PostType;
+  content: string;
 
   media?: {
     image?: string;

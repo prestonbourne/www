@@ -46,20 +46,18 @@ export default function RootLayout({
         className={cx(
           bodyFont.className,
           "selection:bg-foreground-muted/20 selection:text-foreground-highlight",
-          "text-foreground overflow-x-hidden",
+          "text-foreground overflow-x-hidden text-sm sm:text-base",
           "bg-background",
         )}
       >
+        <Banner className="mb-4" />
         <Providers>
-          <Banner />
-          <div className="app-grid mx-auto max-w-7xl">
-            {/* empty div to push the table of contents to the right in 3 column layout */}
+          <div className="app-grid mx-auto max-w-7xl px-4 md:px-0">
             <div>{/* site config */}</div>
             <div>
               {children} <Footer className="text-xs md:text-base" />{" "}
             </div>
             <div className="">
-              <div></div>
             </div>
           </div>
         </Providers>

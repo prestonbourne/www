@@ -32,16 +32,16 @@ const item = {
   },
 };
 
-function Container({ children, className }: React.HTMLProps<HTMLDivElement>) {
+function List({ children, className }: React.HTMLProps<HTMLDivElement>) {
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className={className}>
+    <motion.ul variants={container} initial="hidden" animate="show" className={className}>
       {children}
-    </motion.div>
+    </motion.ul>
   );
 }
 
-function Item({ children }: { children: React.ReactNode }) {
-  return <motion.div variants={item}>{children}</motion.div>;
+function Item({ children, className }: { children: React.ReactNode, className?: string }) {
+  return <motion.li variants={item} className={className}>{children}</motion.li>;
 }
 
-export { Container, Item };
+export { List, Item };

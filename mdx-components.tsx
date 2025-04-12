@@ -1,12 +1,10 @@
 import React from "react";
 
-import type { MDXRemoteProps } from "next-mdx-remote/rsc";
 import type { MDXComponents } from "mdx/types";
 import { cx } from "class-variance-authority";
 
-import { MDXRemote } from "next-mdx-remote/rsc";
 import { ReactElement } from "react";
-import { CodeBlock, extractCodeEl, extractLang } from "./code-block";
+import { CodeBlock, extractCodeEl, extractLang } from "./src/components/code-block";
 import { codeToHtml } from "shiki";
 import {
   Heading,
@@ -14,29 +12,18 @@ import {
   Paragraph,
   UnorderedList,
   ListItem,
-} from "./typography";
-import { Divider } from "./divider";
-import { Video } from "./video";
-import { Image } from "./image/image-with-dialog";
-import { PersonLink } from "./person-link";
-import { Callout } from "./callout";
+} from "./src/components/typography";
+import { Divider } from "./src/components/divider";
+import { Video } from "./src/components/video";
+import { Image } from "./src/components/image/image-with-dialog";
+import { PersonLink } from "./src/components/person-link";
+import { Callout } from "./src/components/callout";
 
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import rehypePrettyCode from "rehype-pretty-code";
 
-// sketches
-import ConwaysWebGPU from "@/sketches/conways-web-gpu/sketch";
-import PerlinNoiseSea from "@/sketches/first-water/sketch";
-import MeshGradient from "@/sketches/mesh-gradient-1/sketch";
-
-const Sketch = {
-  ConwaysWebGPU,
-  PerlinNoiseSea,
-  MeshGradient,
-};
-
-const components: MDXComponents = {
+const myComponents: MDXComponents = {
   h1: (props) => <Heading level={1} {...props} />,
   h2: (props) => <Heading level={2} {...props} className="my-3" />,
   h3: (props) => <Heading level={3} {...props} className="my-3" />,
@@ -48,18 +35,8 @@ const components: MDXComponents = {
   },
   a: (props) => {
     const { href, children, ...rest } = props;
-    if (typeof href !== "string") {
-      return (
-        <Link href="" {...rest}>
-          {children}
-        </Link>
-      );
-    }
-    return (
-      <Link href={href} {...rest}>
-        {children}
-      </Link>
-    );
+    // @ts-expect-error - TODO: fix this
+    return <Link href={href} {...rest}>{children}</Link>;
   },
   ul: (props) => <UnorderedList {...props} />,
   li: (props) => <ListItem {...props} />,
@@ -69,7 +46,6 @@ const components: MDXComponents = {
   Image,
   Video,
   PersonLink,
-  Sketch,
   // pre: async (props) => {
   //   const isElement = React.isValidElement(props.children);
   //   if (!isElement) {
@@ -89,36 +65,37 @@ const components: MDXComponents = {
   // },
 };
 
-export function useMDXComponents(components: MDXComponents): MDXComponents {
+export function useMDXComponents(builtInComponents: MDXComponents): MDXComponents {
   return {
-    ...components,
+    ...builtInComponents,
+    ...myComponents,
   };
 }
 
-export function MDX(props: JSX.IntrinsicAttributes & MDXRemoteProps) {
-  return (
-    <MDXRemote
-      {...props}
-      components={components}
-      options={{
-        mdxOptions: {
-          remarkPlugins: [remarkGfm],
-          rehypePlugins: [
-            rehypeSlug,
-            [
-              rehypePrettyCode,
-              {
-                theme: {
-                  dark: "github-dark",
-                  light: "github-light",
-                },
-                defaultLang: "tsx",
-                keepBackground: false,
-              },
-            ],
-          ],
-        },
-      }}
-    />
-  );
-}
+// export function MDX(props: JSX.IntrinsicAttributes & MDXRemoteProps) {
+//   return (
+//     <MDXRemote
+//       {...props}
+//       components={myComponents}
+//       options={{
+//         mdxOptions: {
+//           remarkPlugins: [remarkGfm],
+//           rehypePlugins: [
+//             rehypeSlug,
+//             [
+//               rehypePrettyCode,
+//               {
+//                 theme: {
+//                   dark: "github-dark",
+//                   light: "github-light",
+//                 },
+//                 defaultLang: "tsx",
+//                 keepBackground: false,
+//               },
+//             ],
+//           ],
+//         },
+//       }}
+//     />
+//   );
+// }
