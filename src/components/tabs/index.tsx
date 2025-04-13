@@ -2,60 +2,35 @@
 
 import * as TabsPrimitive from "@radix-ui/react-tabs";
 import * as React from "react";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { cx } from "class-variance-authority";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
+
 const Tabs = TabsPrimitive.Root;
 
-type TabsRootProps = React.ComponentPropsWithoutRef<typeof TabsPrimitive.Root> & {
-  urlStateKey?: string;
+
+export type TabsRootProps = React.ComponentPropsWithoutRef<
+  typeof TabsPrimitive.Root
+> & {
   defaultValue: string;
-  setToUrl?: boolean;
 };
 
-const TabsRoot = ({ urlStateKey, defaultValue, value, onValueChange, setToUrl = true, ...props }: TabsRootProps) => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const hasInitialized = useRef(false);
 
-  const isUrlControlled = !!urlStateKey;
-  
-  const handleValueChange = (newValue: string) => {
-    if (isUrlControlled) {
-      const params = new URLSearchParams(searchParams);
-      params.set(urlStateKey, newValue);
-      router.replace(`${pathname}?${params.toString()}`);
-    }
-    onValueChange?.(newValue);
+const BaseTabsRoot = ({ defaultValue, onValueChange, ...props }: TabsRootProps) => {
+
+  const [activeTab, setActiveTab] = useState(defaultValue);
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    onValueChange?.(value);
   };
-
-  const currentValue = isUrlControlled 
-    ? searchParams.get(urlStateKey) || defaultValue
-    : value || defaultValue;
-
-    useEffect(() => {
-      if (hasInitialized.current) {
-        return;
-      }
-  
-      hasInitialized.current = true;
-      
-      if (!setToUrl || !urlStateKey) {
-        return;
-      }
-  
-      const params = new URLSearchParams(searchParams);
-      params.set(urlStateKey, currentValue);
-      router.replace(`${pathname}?${params.toString()}`);
-    }, [router, setToUrl, urlStateKey, searchParams, pathname, currentValue]);
 
   return (
     <TabsPrimitive.Root
       {...props}
-      value={currentValue}
-      onValueChange={handleValueChange}
+      value={activeTab}
+      onValueChange={handleTabChange}
     />
   );
 };
@@ -154,13 +129,86 @@ const TabsContent = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <TabsPrimitive.Content
     ref={ref}
-    className={cx(
-      "mt-2 focus-visible:outline-none",
-      className
-    )}
+    className={cx("mt-2 focus-visible:outline-none", className)}
     {...props}
   />
 ));
 TabsContent.displayName = TabsPrimitive.Content.displayName;
 
-export { TabsRoot as Tabs, TabsContent, TabsList, TabsTrigger };
+export { BaseTabsRoot as Tabs, TabsContent, TabsList, TabsTrigger };
+
+
+export type TabsWithUrlStateProps = {
+  urlStateKey?: string;
+  syncOnMount?: boolean;
+} & TabsRootProps;
+
+export const TabsWithUrlState = ({
+  urlStateKey = 'tab',
+  defaultValue,
+  onValueChange,
+  syncOnMount = true,
+  ...props
+}: TabsWithUrlStateProps) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const hasInitialized = useRef(false);
+
+  return (
+    <Suspense fallback={<Tabs defaultValue={defaultValue} />}>
+      <TabsWithUrlStateInner
+        urlStateKey={urlStateKey}
+        defaultValue={defaultValue}
+        syncOnMount={syncOnMount}
+        router={router}
+        pathname={pathname}
+        {...props}
+      />
+    </Suspense>
+  );
+}
+
+const TabsWithUrlStateInner = ({
+  urlStateKey,
+  defaultValue,
+  syncOnMount,
+  router,
+  pathname,
+  ...props
+}: TabsWithUrlStateProps & {
+  router: ReturnType<typeof useRouter>;
+  pathname: string;
+}) => {
+  const searchParams = useSearchParams();
+  const hasInitialized = useRef(false);
+
+  const handleValueChange = useCallback(
+    (newValue: string) => {
+      const params = new URLSearchParams(searchParams);
+      params.set(urlStateKey!, newValue);
+      router.replace(`${pathname}?${params.toString()}`);
+    },
+    [router, pathname, searchParams, urlStateKey]
+  );
+
+  useEffect(() => {
+    if (hasInitialized.current) {
+      return;
+    }
+    hasInitialized.current = true;
+
+    if (!syncOnMount) {
+      return;
+    }
+
+    handleValueChange(defaultValue);
+  }, [handleValueChange, defaultValue, syncOnMount]);
+
+  return (
+    <Tabs
+      {...props}
+      defaultValue={defaultValue}
+      onValueChange={handleValueChange}
+    />
+  );
+}

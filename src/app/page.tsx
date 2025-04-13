@@ -7,7 +7,7 @@ import {
   MobilePostGrid,
 } from "@/components/posts/grid";
 import { Divider } from "@/components/divider";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/tabs";
+import { TabsWithUrlState, TabsContent, TabsList, TabsTrigger } from "@/components/tabs";
 import { PostList } from "@/components/posts/list";
 
 export default async function Page() {
@@ -20,6 +20,7 @@ export default async function Page() {
   });
   const notes = sortedPosts.filter((post) => post.type === "notes");
   const work = sortedPosts.filter((post) => post.type === "work");
+
   return (
     <>
       <header>
@@ -58,7 +59,7 @@ export default async function Page() {
       </header>
       <Divider className="my-4" />
       <main className="w-full mx-auto flex flex-col gap-6">
-        <Tabs defaultValue="work" urlStateKey="postsTab">
+        <TabsWithUrlState defaultValue="work">
           <TabsList>
             <TabsTrigger value="work">work</TabsTrigger>
             <TabsTrigger value="notes">notes</TabsTrigger>
@@ -73,7 +74,7 @@ export default async function Page() {
           <TabsContent value="notes" className="min-h-[700px] md:min-h-[400px]">
             <PostList posts={notes} />
           </TabsContent>
-        </Tabs>
+        </TabsWithUrlState>
       </main>
     </>
   );
