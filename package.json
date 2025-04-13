@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "tsx src/scripts/runner.ts",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

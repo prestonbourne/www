@@ -56,7 +56,7 @@ export default async function Page() {
       </header>
       <Divider className="my-4" />
       <main className="w-full mx-auto flex flex-col gap-6">
-        <Tabs defaultValue="work">
+        <Tabs defaultValue="work" urlStateKey="postsTab">
           <TabsList>
             <TabsTrigger value="work">work</TabsTrigger>
             <TabsTrigger value="notes">notes</TabsTrigger>

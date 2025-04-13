@@ -4,8 +4,67 @@ import * as TabsPrimitive from "@radix-ui/react-tabs";
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
 import { cx } from "class-variance-authority";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const Tabs = TabsPrimitive.Root;
+
+type TabsRootProps = React.ComponentPropsWithoutRef<typeof TabsPrimitive.Root> & {
+  urlStateKey?: string;
+  defaultValue: string;
+  setToUrl?: boolean;
+};
+
+const TabsRoot = ({ urlStateKey, defaultValue, value, onValueChange, setToUrl = true, ...props }: TabsRootProps) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const hasInitialized = useRef(false);
+
+
+
+  const isUrlControlled = !!urlStateKey;
+  
+  const handleValueChange = (newValue: string) => {
+    if (isUrlControlled) {
+      const params = new URLSearchParams(searchParams);
+      params.set(urlStateKey, newValue);
+      router.replace(`${pathname}?${params.toString()}`);
+    }
+    onValueChange?.(newValue);
+  };
+
+  const currentValue = isUrlControlled 
+    ? searchParams.get(urlStateKey) || defaultValue
+    : value || defaultValue;
+
+    useEffect(() => {
+      if (hasInitialized.current) {
+        return;
+      }
+  
+      hasInitialized.current = true;
+      
+      if (!setToUrl || !urlStateKey) {
+        return;
+      }
+  
+      const params = new URLSearchParams(searchParams);
+      params.set(urlStateKey, currentValue);
+      router.replace(`${pathname}?${params.toString()}`);
+    }, [router, setToUrl, urlStateKey, searchParams, pathname, currentValue]);
+
+  return (
+    <TabsPrimitive.Root
+      {...props}
+      value={currentValue}
+      onValueChange={handleValueChange}
+      onLoad={() => {
+        console.log("onLoad", setToUrl, urlStateKey);
+  
+      }}
+    />
+  );
+};
 
 const TabsList = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.List>,
@@ -110,4 +169,4 @@ const TabsContent = React.forwardRef<
 ));
 TabsContent.displayName = TabsPrimitive.Content.displayName;
 
-export { Tabs, TabsContent, TabsList, TabsTrigger };
+export { TabsRoot as Tabs, TabsContent, TabsList, TabsTrigger };

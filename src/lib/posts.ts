@@ -1,18 +1,21 @@
 import fs from "fs";
 import path from "path";
-import matter from "gray-matter";
 import { Post, PostNextMetadata, PostType } from "./types";
 import { createSSRClient } from "@/lib/supabase/server-client";
 
-if (typeof window !== 'undefined' || typeof document !== 'undefined') {
-  throw new Error('This file should not be imported on the client')
+if (typeof window !== "undefined" || typeof document !== "undefined") {
+  throw new Error("This file should not be imported on the client");
 }
 
-async function extractPostMetadata(filePath: string): Promise<{ post: Omit<Post, "audience"> } | { error: Error }> {
+async function extractPostMetadata(
+  filePath: string
+): Promise<{ post: Omit<Post, "audience"> } | { error: Error }> {
   try {
     const rawContent = fs.readFileSync(filePath, "utf-8");
-    
-    const metadataMatch = rawContent.match(/export const metadata = ({[\s\S]*?});/);
+
+    const metadataMatch = rawContent.match(
+      /export const metadata = ({[\s\S]*?});/
+    );
     if (!metadataMatch) {
       return { error: new Error(`No metadata found in ${filePath}`) };
     }
@@ -21,7 +24,9 @@ async function extractPostMetadata(filePath: string): Promise<{ post: Omit<Post,
     const metadata = eval(`(${metadataStr})`) as PostNextMetadata;
 
     if (!metadata.title) {
-      return { error: new Error(`Missing required metadata fields in ${filePath}`) };
+      return {
+        error: new Error(`Missing required metadata fields in ${filePath}`),
+      };
     }
 
     const slug = path.basename(path.dirname(filePath));
@@ -49,7 +54,11 @@ async function extractPostMetadata(filePath: string): Promise<{ post: Omit<Post,
 
     return { post };
   } catch (error) {
-    return { error: new Error(`Failed to read or parse the file at ${filePath}`, { cause: error }) };
+    return {
+      error: new Error(`Failed to read or parse the file at ${filePath}`, {
+        cause: error,
+      }),
+    };
   }
 }
 
@@ -63,7 +72,9 @@ export const calculateReadingTimeMS = (
   return readTime;
 };
 
-const getMdxPagePaths = (dir: string): { paths: string[] } | { error: Error } => {
+const getMdxPagePaths = (
+  dir: string
+): { paths: string[] } | { error: Error } => {
   try {
     const allFiles = fs.readdirSync(dir);
     const mdxFiles: string[] = [];
@@ -73,12 +84,12 @@ const getMdxPagePaths = (dir: string): { paths: string[] } | { error: Error } =>
       const stat = fs.statSync(fullPath);
 
       if (stat.isDirectory()) {
-        const pagePath = path.join(fullPath, 'page.mdx');
+        const pagePath = path.join(fullPath, "page.mdx");
         if (fs.existsSync(pagePath)) {
           mdxFiles.push(pagePath);
         }
         const subDirResult = getMdxPagePaths(fullPath);
-        if ('paths' in subDirResult) {
+        if ("paths" in subDirResult) {
           mdxFiles.push(...subDirResult.paths);
         }
       }
@@ -86,32 +97,46 @@ const getMdxPagePaths = (dir: string): { paths: string[] } | { error: Error } =>
 
     return { paths: mdxFiles };
   } catch (error) {
-    return { error: new Error(`Failed to read directory at ${dir}`, { cause: error }) };
+    return {
+      error: new Error(`Failed to read directory at ${dir}`, { cause: error }),
+    };
   }
-}
+};
 
+const allCache = new Map<string, Omit<Post, "audience">[]>();
+const postCache = new Map<string, Omit<Post, "audience">>();
 export async function getPosts(): Promise<Omit<Post, "audience">[]> {
+  if (allCache.has("all_posts")) {
+    return allCache.get("all_posts")!;
+  }
+
   const notesDir = path.join(process.cwd(), "src", "app", "(posts)", "notes");
   const workDir = path.join(process.cwd(), "src", "app", "(posts)", "work");
 
   const notePathsResult = getMdxPagePaths(notesDir);
   const workPathsResult = getMdxPagePaths(workDir);
 
-  if ('error' in notePathsResult) { 
-    console.error(`[lib/posts] Failed to get note paths: ${notePathsResult.error}`);
+  if ("error" in notePathsResult) {
+    console.error(
+      `[lib/posts] Failed to get note paths: ${notePathsResult.error}`
+    );
     return [];
   }
 
-  if ('error' in workPathsResult) {
-    console.error(`[lib/posts] Failed to get work paths: ${workPathsResult.error}`);
+  if ("error" in workPathsResult) {
+    console.error(
+      `[lib/posts] Failed to get work paths: ${workPathsResult.error}`
+    );
     return [];
   }
 
   const posts = await Promise.all([
     ...notePathsResult.paths.map(async (filePath) => {
       const result = await extractPostMetadata(filePath);
-      if ('error' in result) {
-        console.error(`[lib/posts] Failed to extract post metadata for ${filePath}: ${result.error}`);
+      if ("error" in result) {
+        console.error(
+          `[lib/posts] Failed to extract post metadata for ${filePath}: ${result.error}`
+        );
         return null;
       }
       return {
@@ -121,7 +146,7 @@ export async function getPosts(): Promise<Omit<Post, "audience">[]> {
     }),
     ...workPathsResult.paths.map(async (filePath) => {
       const result = await extractPostMetadata(filePath);
-      if ('error' in result) {
+      if ("error" in result) {
         console.error(result.error);
         return null;
       }
@@ -129,13 +154,36 @@ export async function getPosts(): Promise<Omit<Post, "audience">[]> {
         ...result.post,
         type: "work" as const,
       } as Omit<Post, "audience">;
-    })
+    }),
   ]);
 
-  return posts.filter((post): post is Omit<Post, "audience"> => post !== null);
+  const res = posts.filter(
+    (post): post is Omit<Post, "audience"> => post !== null
+  );
+  allCache.set("all_posts", res);
+  return res;
 }
 
-export async function getPostViews(slug: string): Promise<{ views: number } | { error: Error }> {
+export async function getPostBySlug(
+  slug: string
+): Promise<Omit<Post, "audience"> | null> {
+  if (postCache.has(`post_${slug}`)) {
+    return postCache.get(`post_${slug}`)!;
+  }
+
+  const posts = await getPosts();
+  const res = posts.find((post) => post.slug === slug) ?? null;
+  if (res) {
+    postCache.set(`post_${slug}`, res);
+  } else {
+    console.error(`[lib/posts] Failed to get post by slug: ${slug}`);
+  }
+  return res;
+}
+
+export async function getPostViews(
+  slug: string
+): Promise<{ views: number } | { error: Error }> {
   const supabase = await createSSRClient();
   const { data, error } = await supabase
     .from("posts")

@@ -25,6 +25,16 @@ export const Breadcrumb = () => {
 
         const isLast = index === paths.length - 1;
 
+        // If there are exactly 2 paths and this is the first one (index 0)
+        if (paths.length === 2 && index === 0) {
+          return (
+            <React.Fragment key={path}>
+              <UnstyledLink href={`/?postsTab=${path}`}>{path}</UnstyledLink>
+              <ChevronRightIcon />
+            </React.Fragment>
+          );
+        }
+
         return (
           <React.Fragment key={path}>
             {isLast ? (

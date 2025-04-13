@@ -1,12 +1,8 @@
 import { MetadataRoute } from "next";
 import { getPosts } from "@/lib/posts";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const projectPosts = getPosts("projects");
-  const sketchPosts = getPosts("sketches");
-  const notePosts = getPosts("notes");
-  const allPosts = [...projectPosts, ...sketchPosts, ...notePosts];
-
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const allPosts = await getPosts();
   const allPostsEntries: MetadataRoute.Sitemap = allPosts.map((post: any) => {
     return {
       // @ts-ignore ts not picking up the correct type at build time

@@ -1,10 +1,10 @@
 /* 
     Nextjs does not have a built-in way to define types for server components
 */
-export interface NextPageProps<SlugType = string> {
+export type NextPageProps<SlugType = string> = React.PropsWithChildren<{
   params: { slug: SlugType };
   searchParams?: { [key: string]: string | string[] | undefined };
-}
+}>;
 
 export type PostNextMetadata = {
   title: string;
