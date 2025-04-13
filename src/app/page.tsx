@@ -2,11 +2,13 @@ import { Heading, Paragraph, Link } from "@/components/typography";
 import { PersonLink } from "@/components/person-link";
 import { Clock } from "@/components/clock";
 import { getPosts } from "@/lib/posts";
-import { DesktopDynamicPostGrid, MobilePostGrid } from "@/components/posts/grid";
+import {
+  DesktopDynamicPostGrid,
+  MobilePostGrid,
+} from "@/components/posts/grid";
 import { Divider } from "@/components/divider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/tabs";
 import { PostList } from "@/components/posts/list";
-
 
 export default async function Page() {
   const posts = await getPosts();
@@ -61,7 +63,10 @@ export default async function Page() {
             <TabsTrigger value="work">work</TabsTrigger>
             <TabsTrigger value="notes">notes</TabsTrigger>
           </TabsList>
-          <TabsContent value="work" className="flex flex-col min-h-[700px] md:min-h-[400px]">
+          <TabsContent
+            value="work"
+            className="flex flex-col min-h-[700px] md:min-h-[400px]"
+          >
             <DesktopDynamicPostGrid posts={work} />
             <MobilePostGrid posts={work} />
           </TabsContent>

@@ -20,8 +20,6 @@ const TabsRoot = ({ urlStateKey, defaultValue, value, onValueChange, setToUrl = 
   const searchParams = useSearchParams();
   const hasInitialized = useRef(false);
 
-
-
   const isUrlControlled = !!urlStateKey;
   
   const handleValueChange = (newValue: string) => {
@@ -58,10 +56,6 @@ const TabsRoot = ({ urlStateKey, defaultValue, value, onValueChange, setToUrl = 
       {...props}
       value={currentValue}
       onValueChange={handleValueChange}
-      onLoad={() => {
-        console.log("onLoad", setToUrl, urlStateKey);
-  
-      }}
     />
   );
 };
