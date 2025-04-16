@@ -1,4 +1,7 @@
 const withVercelToolbar = require('@vercel/toolbar/plugins/next')();
+const withMDX = require("@next/mdx")({
+    extension: /\.mdx?$/,
+});
 
 
 /** @type {import('next').NextConfig} */
@@ -18,5 +21,5 @@ const nextConfig = {
     },
 };
 
-module.exports = withVercelToolbar(nextConfig);
+module.exports = withVercelToolbar(withMDX(nextConfig));
 

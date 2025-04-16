@@ -1,4 +1,4 @@
-import { JetBrains_Mono } from "next/font/google";
+import { IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
@@ -6,13 +6,15 @@ import { Metadata } from "next";
 import { cx } from "class-variance-authority";
 import { Providers } from "@/components/providers";
 import { Footer } from "@/components/footer";
+import { Banner } from "@/components/banner";
 import { VercelToolbar } from "@vercel/toolbar/next";
 import { TableOfContents } from "@/components/posts/table-of-contents";
 import { TWEAK_PANE_CONTAINER_ID } from "@/lib/sketches";
 
-const bodyFont = JetBrains_Mono({
+const bodyFont = IBM_Plex_Mono({
   subsets: ["latin"],
   display: "swap",
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -39,38 +41,23 @@ export default function RootLayout({
   const shouldInjectToolbar = process.env.NODE_ENV === "development";
 
   return (
-    <html lang="en" >
+    <html lang="en">
       <body
         className={cx(
           bodyFont.className,
           "selection:bg-foreground-muted/20 selection:text-foreground-highlight",
-          "text-foreground overflow-x-hidden",
-          "relative", // for flexbar v0
-          "bg-background"
+          "text-foreground overflow-x-hidden text-sm sm:text-base",
+          "bg-background",
         )}
       >
-        <div className="[z-index:-1] pointer-events-none absolute min-h-screen inset-0 bg-repeat bg-[size:180px] opacity-[0.025]" style={{backgroundImage: 'url(/noise.png)'}} ></div>
+        <Banner className="mb-4" />
         <Providers>
-          <div className="2xl:grid 2xl:grid-cols-4 2xl:gap-8 pt-12">
-            {/* empty div to push the table of contents to the right in 3 column layout */}
-            <div
-              aria-hidden="true"
-              className="2xl:col-span-1 hidden 2xl:block"
-            ></div>
-            <div className="2xl:col-span-2 px-4 2xl:px-0">
-              <div className="max-w-(--breakpoint-md) mx-auto">
-                {children} <Footer className="text-xs md:text-base" />{" "}
-              </div>
+          <div className="app-grid mx-auto max-w-7xl px-4 md:px-0">
+            <div>{/* site config */}</div>
+            <div>
+              {children} <Footer className="text-xs md:text-base" />{" "}
             </div>
-            <div className="2xl:col-span-1 hidden 2xl:block">
-              <TableOfContents
-                className="fixed"
-                routes={["/projects", "/notes"]}
-              />
-              <div
-                id={TWEAK_PANE_CONTAINER_ID}
-                className="fixed"
-              ></div>
+            <div className="">
             </div>
           </div>
         </Providers>

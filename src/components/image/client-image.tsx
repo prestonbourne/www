@@ -101,7 +101,7 @@ export const ClientImageClickTarget = ({
   return (
     <div
       aria-label="Open image"
-      className="cursor-zoom-in w-full h-full"
+      className="cursor-zoom-in w-full"
       onClick={() => setIsOpen(true)}
     >
       {children}

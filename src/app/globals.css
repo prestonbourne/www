@@ -365,3 +365,8 @@ html {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+
+.app-grid {
+  display: grid;
+  grid-template-columns: 1fr minmax(0, var(--breakpoint-md)) 1fr;
+}
