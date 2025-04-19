@@ -1,7 +1,7 @@
 import { Heading, Paragraph, Link } from "@/components/typography";
 import { PersonLink } from "@/components/person-link";
 import { Clock } from "@/components/clock";
-import { getPosts } from "@/lib/posts";
+import { getPosts, UNPUBLISHED_SENTINEL } from "@/lib/posts";
 import {
   DesktopDynamicPostGrid,
   MobilePostGrid,
@@ -9,8 +9,6 @@ import {
 import { Divider } from "@/components/divider";
 import { TabsWithUrlState, TabsContent, TabsList, TabsTrigger } from "@/components/tabs";
 import { PostList } from "@/components/posts/list";
-const UNPUBLISHED_WORK_SLUGS = ["skeumorphism-study"];
-
 export default async function Page() {
   const posts = await getPosts();
   const sortedPosts = posts.sort((a, b) => {
@@ -19,10 +17,9 @@ export default async function Page() {
       new Date(a.publishedAt || Date.now()).getTime()
     );
   });
-  const notes = sortedPosts.filter((post) => post.type === "notes");
-  const work = sortedPosts.filter((post) => post.type === "work").filter(
-    (post) => !UNPUBLISHED_WORK_SLUGS.includes(post.slug)
-  );
+
+  const notes = sortedPosts.filter((post) => post.type === "notes" && post.publishedAt !== UNPUBLISHED_SENTINEL);
+  const work = sortedPosts.filter((post) => post.type === "work" && post.publishedAt !== UNPUBLISHED_SENTINEL);
 
   return (
     <>

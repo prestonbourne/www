@@ -3,6 +3,9 @@ import path from "path";
 import { Post, PostNextMetadata, PostType } from "./types";
 import { createSSRClient } from "@/lib/supabase/server-client";
 
+
+export const UNPUBLISHED_SENTINEL = "unpublished";
+
 if (typeof window !== "undefined" || typeof document !== "undefined") {
   throw new Error("This file should not be imported on the client");
 }
