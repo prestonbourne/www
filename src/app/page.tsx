@@ -9,6 +9,7 @@ import {
 import { Divider } from "@/components/divider";
 import { TabsWithUrlState, TabsContent, TabsList, TabsTrigger } from "@/components/tabs";
 import { PostList } from "@/components/posts/list";
+const UNPUBLISHED_WORK_SLUGS = ["skeumorphism-study"];
 
 export default async function Page() {
   const posts = await getPosts();
@@ -19,7 +20,9 @@ export default async function Page() {
     );
   });
   const notes = sortedPosts.filter((post) => post.type === "notes");
-  const work = sortedPosts.filter((post) => post.type === "work");
+  const work = sortedPosts.filter((post) => post.type === "work").filter(
+    (post) => !UNPUBLISHED_WORK_SLUGS.includes(post.slug)
+  );
 
   return (
     <>

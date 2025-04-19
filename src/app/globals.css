@@ -86,7 +86,7 @@
 @utility surface {
   border: 1px solid rgb(var(--foreground-muted) / 0.3);
   border-radius: var(--radius-md);
-  background-color: var(--background-surface);
+  background-color: rgba(var(--background-surface));
 }
 
 @utility sheen-ring {
@@ -201,7 +201,7 @@
 
   :root.light {
     --background: 247 243 234;
-    --background-surface: rgba(255, 255, 255, 0.8);
+    --background-surface: 255 255 255;
     --foreground: 51 65 85;
     --foreground-muted: 71 85 105;
     --foreground-highlight: 15 23 42;

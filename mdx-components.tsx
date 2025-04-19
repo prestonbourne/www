@@ -19,9 +19,6 @@ import { Image } from "./src/components/image/image-with-dialog";
 import { PersonLink } from "./src/components/person-link";
 import { Callout } from "./src/components/callout";
 
-import rehypeSlug from "rehype-slug";
-import remarkGfm from "remark-gfm";
-import rehypePrettyCode from "rehype-pretty-code";
 
 const myComponents: MDXComponents = {
   h1: (props) => <Heading level={1} {...props} />,
@@ -71,31 +68,3 @@ export function useMDXComponents(builtInComponents: MDXComponents): MDXComponent
     ...myComponents,
   };
 }
-
-// export function MDX(props: JSX.IntrinsicAttributes & MDXRemoteProps) {
-//   return (
-//     <MDXRemote
-//       {...props}
-//       components={myComponents}
-//       options={{
-//         mdxOptions: {
-//           remarkPlugins: [remarkGfm],
-//           rehypePlugins: [
-//             rehypeSlug,
-//             [
-//               rehypePrettyCode,
-//               {
-//                 theme: {
-//                   dark: "github-dark",
-//                   light: "github-light",
-//                 },
-//                 defaultLang: "tsx",
-//                 keepBackground: false,
-//               },
-//             ],
-//           ],
-//         },
-//       }}
-//     />
-//   );
-// }
