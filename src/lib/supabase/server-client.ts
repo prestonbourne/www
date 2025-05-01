@@ -23,7 +23,7 @@ export const createAdminClient = () => {
 };
 
 export const createSSRClient = async () => {
-  const cookieStore = await cookies();
+  const cookieStore = cookies();
 
   return createServerClient<Database>(supabaseUrl, supabaseKey, {
     cookies: {

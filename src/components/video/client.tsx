@@ -96,7 +96,7 @@ export const ClientVideoClickTarget = ({
   return (
     <div
       aria-label="Open video"
-      className="cursor-pointer w-full h-full"
+      className="cursor-pointer w-full"
       onClick={() => setIsOpen(true)}
     >
       {children}
