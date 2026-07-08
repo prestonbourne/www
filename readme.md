@@ -18,10 +18,10 @@ you're welcome to use any code snippets you find, or even use the entire website
 
 ## Development
 
-1. install package:, `pnpm i`
-2. build mdx content, `pnpm run prebuild`
-3. run the development server `pnpm run dev`
+1. install packages: `bun i`
+2. build mdx content, `bun run prebuild`
+3. run the development server `bun run dev`
 
 To install supbase types (_optional_):
-`pnpx supabase gen types typescript --project-id {PROJECT_ID} --schema public > src/lib/supabase/types.gen.ts`
+`bunx supabase gen types typescript --project-id {PROJECT_ID} --schema public > src/lib/supabase/types.gen.ts`
 [Read More](https://supabase.com/docs/guides/api/rest/generating-types)
