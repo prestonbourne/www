@@ -10,8 +10,9 @@ export function Hero() {
     <header className="max-w-(--breakpoint-sm) leading-none">
       <Heading level={1}>preston bourne</Heading>
       <Body className={"my-2"}>
-        <PersonLink name="hashicorp" url="https://www.hashicorp.com" />{" "}
-        engineer, responsible for a suite of high traffic web applications.
+        <PersonLink name="hedra" url="https://www.hedra.com" /> engineer,
+        building agentic systems for creative work — an agent that ideates,
+        plans, and produces video, image, and audio alongside you.
       </Body>
       <div className="flex flex-row gap-3 my-7 items-center text-sm sm:text-base">
         <Links />
