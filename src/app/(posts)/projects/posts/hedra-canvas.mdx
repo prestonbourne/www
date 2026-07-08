@@ -1,0 +1,59 @@
+---
+title: "Hedra Canvas"
+description: "An infinite canvas where the agent works alongside you, shipped publicly as Spaces. I migrated it to tldraw, built the media shapes and the real-time share system from the database to the sync worker."
+publishedAt: "2026-07-08T16:55:00Z"
+imageURL: "/posts/projects/hedra-canvas/cover.png"
+---
+
+<Image
+    src="/posts/projects/hedra-canvas/share-viewer.png"
+    alt="A publicly shared space viewed through the read-only canvas viewer, a brand research task with generated product imagery arranged on an infinite canvas."
+/>
+
+- <Link href="https://www.hedra.com">Hedra</Link>
+- <Link href="https://x.com/hedra_labs/status/2060043427182530800">Launch announcement</Link>
+
+The second generation of Hedra Agent moved the conversation onto an infinite canvas, shipped publicly as Spaces. Instead of scrolling a chat log, you and the agent share a workspace: it drops generations onto the canvas, arranges them into sections, and you rearrange, annotate and iterate spatially. Chat is still there, but the canvas is the primary surface.
+
+## Betting on tldraw
+
+The first canvas was hand-rolled on React Flow with Yjs for sync. It worked, but we were maintaining node rendering, selection, syncing and interaction code that wasn't our product. I migrated the whole thing to <Link href="https://tldraw.dev/">tldraw</Link>, deleting about 3,800 lines of custom infrastructure in one PR and getting a proper editor runtime in exchange: selection, snapping, undo, multiplayer cursors, all someone else's well-tested problem.
+
+Our media tiles became custom shape utils on top of that runtime, with a context aware toolbar, text mode with inline editing, group and ungroup, keyboard shortcuts for every tool, and a dotted grid to make the infinite feel navigable. The agent participates through a canvas actions tool, its shape edits render as a card in chat with a summary and a Focus button that zooms the viewport to whatever it just did.
+
+<Image
+    src="/posts/projects/hedra-canvas/canvas-approval-before.png"
+    alt="Before, the canvas prompt input and the tool approval card layered on top of each other, overlapping visually."
+/>
+
+<Image
+    src="/posts/projects/hedra-canvas/canvas-approval-after.png"
+    alt="After, the approval card cleanly swaps in place of the prompt input with the generation details and approve or deny actions."
+/>
+
+## Two Libraries, One Pointer
+
+The gnarliest bug of the project: videos on the canvas wouldn't play. tldraw captures the pointer to decide click versus drag, and the video player ships interactive controls that also want the pointer. Whoever wins, the other feature breaks, playable but not draggable, or draggable but not playable.
+
+The fix was to stop fighting over the gesture. The player is mounted completely inert, tldraw disambiguates click from drag the way it does for every shape, and a custom control bar renders on top where each control claims its own gesture explicitly. Playback state lives on the media element itself, read through `useSyncExternalStore`, so the UI can't drift from reality.
+
+<Video src="/posts/projects/hedra-canvas/canvas-video-controls.mp4" autoPlay loop muted caption="Video tiles with custom controls, click to play, drag to move, and neither breaks the other." />
+
+## Sharing a Space
+
+I built read-only share links across the full stack, five stacked PRs on the backend alone. A share is a row with a public token and a partial unique index guaranteeing one active share per canvas, revoke is a soft delete. Public video playback IDs are reference-counted through a join table so revoking a share tears down exactly the playback access nothing else is using.
+
+The viewer is the same tldraw canvas in read-only mode, minting anonymous tickets against the sync worker. Enforcement is server side, the worker flags the session read-only at the protocol layer and drops any crafted mutation, the client lock is just UX. Revoking a share pings the worker to disconnect live viewers within a second, with the ticket TTL as fallback. Viewers can download every asset as a zip or duplicate the space into their own account without an account for the former, with one for the latter.
+
+## Spaces as the Front Door
+
+As the canvas became the product's center of gravity, the home page reorganized around it, a grid of your spaces with inline creation, loading skeletons, and the prompt box up top feeding straight into a new space.
+
+<Image
+    src="/posts/projects/hedra-canvas/spaces-home.png"
+    alt="The Hedra home page in light mode, a prompt box reading Start with an idea above a grid of space cards with loading skeletons."
+/>
+
+## Conclusion & Learnings
+
+The canvas taught me to be ruthless about what code deserves to exist. The React Flow implementation wasn't bad, it was just ours, and every line of infrastructure we owned was a line we weren't spending on the product. Deleting it for tldraw was the highest leverage change of the project, and the pointer war with the video player was a good reminder that composing two opinionated libraries means deciding explicitly who owns each gesture.

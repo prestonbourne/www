@@ -1,0 +1,54 @@
+---
+title: "Hedra Agent"
+description: "An agent that plans, prompts and orchestrates generative models to take you from idea to finished visual content. I built the chat experience end to end, from the streaming protocol to the tool approval UX."
+publishedAt: "2026-07-08T16:50:00Z"
+imageURL: "/posts/projects/hedra-agent/cover.png"
+---
+
+<Video src="/posts/projects/hedra-agent/tool-approval.mp4" autoPlay loop muted caption="An early build of the agent planning and generating, with tool calls surfaced as approval cards." />
+
+- <Link href="https://www.hedra.com">Hedra</Link>
+- <Link href="https://x.com/hedra_labs/status/2031407847993467022">Launch announcement</Link>
+- Collaborators: <PersonLink name="David Lu" url="https://github.com/david-lu" />, <PersonLink name="Eliza Evans" url="https://github.com/eve9du" />
+
+Hedra Agent is a chat interface over the company's generative models: describe the content you want and the agent plans, writes prompts, picks models and runs the generations for you. I worked on it from the first prototype to the public launch, across both the Next.js frontend and the Python backend.
+
+The core design problem is that a generation isn't a chat message. It costs credits, takes minutes, and might be exactly wrong. So the whole experience is built around showing work before it happens: the agent proposes a plan, surfaces each tool call as a card you can inspect, and waits for approval before spending anything.
+
+## Human in the Loop
+
+Every generation tool call renders as an approval card with the full prompt, the model, resolution and credit cost. You can approve, deny with a reason the agent actually reads, edit the arguments, or grant an always-allow for tools you trust.
+
+<Image
+    src="/posts/projects/hedra-agent/plan-tool.png"
+    alt="The agent chat showing a Create Plan step with Enhance Prompt and Generate Image chips, followed by the enhanced prompt and a Generate Image tool call."
+/>
+
+Getting this right took work on both sides of the wire. On the backend, runs live in a table where each row is one user message to agent response cycle, deferred tool calls persist their status, denial reasons and argument overrides to the database, and the stream is reconstructed from the database rather than from whatever the client happens to resend. That "database as source of truth" rewrite deleted a class of bugs where an approval raced the stream and silently vanished.
+
+Later we made parallel tool calls the default, so the agent can propose several generations in one turn and you approve them as a batch.
+
+## Streaming
+
+The agent streams over SSE following the AG-UI protocol spec, text deltas, tool call starts, arguments, results, run lifecycle events. I rewrote the transport twice. The version that shipped splits the flow in two: create the run with a POST, then stream events from a GET with `Last-Event-ID`, so a dropped connection reconnects with exponential backoff and picks up exactly where it left off. Idempotency keys make retries safe, and long runs refresh the auth token before reconnecting so a stream can't die of expiry.
+
+<Image
+    src="/posts/projects/hedra-agent/enhance-prompt.png"
+    alt="The agent expanding a short user prompt into a detailed generation prompt, streamed as a tool call following the AG-UI protocol."
+/>
+
+The other rewrite was on the client. Streaming originally flowed through an imperative Zustand store with status flags set from event handlers scattered across the codebase. I moved it onto React Query mutations with progressive cache updates, and replaced the stored agent status with a pure function that derives status from the message history. It shipped with the feature's first unit tests, and hot-swapping the implementation behind a flag meant zero risk to the running product.
+
+<Video src="/posts/projects/hedra-agent/hotswap.mp4" autoPlay loop muted caption="The rebuilt streaming layer running behind a feature flag, status is derived from messages instead of imperative state." />
+
+## The Little Things
+
+Chat UIs hide a lot of hard problems in plain sight. Scroll behavior alone went through a compound `ChatScroller` component to keep autoscroll, scroll masks and "new message" affordances from fighting user intent. Thinking indicators got a timer that doesn't reset mid-thought. Generation previews stopped flashing a square before rounding their corners.
+
+<Video src="/posts/projects/hedra-agent/preview-flash.mp4" autoPlay loop muted caption="Generation previews rendering with stable geometry while they stream in." />
+
+My favorite fix in the whole project was a system prompt change: the agent's internal codename kept leaking into responses, so somewhere in the backend there is a line firmly instructing it not to refer to itself by a flower's name.
+
+## Conclusion & Learnings
+
+Agent UIs are protocol problems wearing a chat costume. Almost every visible bug traced back to state living in the wrong place, the stream, the store, or the database disagreeing about what happened. Deriving UI from persisted state and treating the stream as a replayable log fixed more UX complaints than any amount of interface polish did.
