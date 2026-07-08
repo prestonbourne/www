@@ -1,0 +1,87 @@
+---
+title: "Hedra Composer"
+description: "A timeline video editor that runs entirely in the browser, built for editing with generative video. I built its rendering engine, along with waveforms, captions and a lot of the interaction polish."
+publishedAt: "2026-07-08T16:45:00Z"
+imageURL: "/posts/projects/hedra-composer/cover.png"
+---
+
+<Video src="/posts/projects/hedra-composer/captions-demo.mp4" autoPlay loop muted caption="Generating captions for a composition, each caption is a clip on its own track." />
+
+- <Link href="https://www.hedra.com">Hedra</Link>
+- Collaborators: <PersonLink name="David Lu" url="https://github.com/david-lu" />, <PersonLink name="Eliza Evans" url="https://github.com/eve9du" />
+
+At Hedra I spent a few months building the Composer, a timeline based video editor that runs entirely in the browser. Most editors assume all your footage already exists. Ours couldn't. Clips on the timeline might still be generating on a GPU somewhere, so the editor had to treat "this video doesn't exist yet" as a first class state rather than an error.
+
+## Generating on the Timeline
+
+You can prompt for a new clip or extend an existing one directly on the timeline. A polling system tracks in-flight generations and swaps the placeholder clip for real frames the moment they land.
+
+<Video src="/posts/projects/hedra-composer/generate-extend.mp4" autoPlay loop muted caption="Extending a clip in place, the generation renders as a clip on the timeline while it cooks." />
+
+<Video src="/posts/projects/hedra-composer/generated-playback.mp4" autoPlay loop muted caption="Scrubbing through a composition of generated clips." />
+
+## The Rendering Engine
+
+I built the rendering engine that sits under the composer. The first version of the preview was a stack of DOM elements, which fell over quickly once compositions got interesting. The engine replaced it with three pieces: a coordinator that owns the playback state machine and keeps the audio and video clocks in agreement, a WebGL compositor built on <Link href="https://pixijs.com/">PixiJS</Link> that handles frame rendering, caption overlays and scrub previews, and an audio controller that schedules buffers through the Web Audio API. Decoding runs on WebCodecs via <Link href="https://mediabunny.dev/">mediabunny</Link>, so frames come off the hardware decoder instead of a hidden `<video>` element.
+
+Export uses the same pipeline in reverse, the timeline encodes straight to an MP4 on the client. No render farm, your composition never leaves the browser until you ask it to.
+
+<Video src="/posts/projects/hedra-composer/audio-layering.mp4" controls caption="An early proof of layered audio, multiple tracks mixed with per clip volume. Turn your sound on." />
+
+The hardest bugs were the ones where audio and video disagreed about what time it was. Video audio originally streamed through async chunk iteration while audio clips played from pre-decoded buffers, two different clocks that drifted under load. Unifying everything onto pre-decoded AudioBuffers deleted a whole class of sync bugs and about half the audio code with it.
+
+## Keeping React Out of the Render Loop
+
+An engine living inside a React app really has two frame rates, the one the compositor runs at and the one React can survive. The engine renders the canvas at 60fps but publishes playback time to React at 30fps, and subscriptions are scoped so a moving playhead only re-renders the components that actually care.
+
+<Video src="/posts/projects/hedra-composer/rerender-before.mp4" autoPlay loop muted caption="Before, React Scan shows toggling play re-rendering half the timeline." />
+
+<Video src="/posts/projects/hedra-composer/rerender-after.mp4" autoPlay loop muted caption="After scoping subscriptions, only the playback controls re-render." />
+
+Thumbnails got the same treatment, filmstrips render in a window around the visible viewport instead of materializing every thumbnail on the timeline, and a quality pass fixed their aspect ratios.
+
+<Image
+    src="/posts/projects/hedra-composer/thumbnails-before.png"
+    alt="The composer timeline before the thumbnail pass, filmstrip thumbnails are stretched and blurry."
+/>
+
+<Image
+    src="/posts/projects/hedra-composer/thumbnails-after.png"
+    alt="The composer timeline after the thumbnail pass, filmstrip thumbnails are crisp with correct aspect ratios."
+/>
+
+## Waveforms
+
+Waveforms were their own rabbit hole. The naive approach, one canvas per audio clip, breaks on long audio because browsers cap canvas dimensions. I ended up tiling each waveform across multiple canvases capped at 2048px, so a forty minute track renders at full quality at any zoom level.
+
+<Image
+    src="/posts/projects/hedra-composer/waveform-tiles.png"
+    alt="Before and after comparison of the waveform fix. Before, long audio clips render with a compressed low quality waveform. After, the tiled canvas approach renders the full waveform crisply."
+/>
+
+The waveform also scales with the clip's volume and crops with the clip's trim, small things, but they make the timeline feel honest.
+
+<Video src="/posts/projects/hedra-composer/waveform-volume.mp4" autoPlay loop muted caption="Waveforms scale as you drag a clip's volume." />
+
+## Captions & Translations
+
+We transcribe the audio on the timeline and lay the result out as a dedicated caption track, each segment is a clip you can nudge like any other. From there translation was a natural extension, pick a language and the whole track re-renders.
+
+<Image
+    src="/posts/projects/hedra-composer/translations.png"
+    alt="The composer showing a caption track translated into another language, with the translation menu open."
+/>
+
+## The Little Things
+
+A tool like this lives or dies on interaction details, and the team swarmed them. We built drag and drop uploads with proper audio drop placement, so dragging a file lands it exactly where you'd expect on the timeline. We also made scrubbing dramatically faster, added timeline autoscroll and recording audio directly onto a track.
+
+<Video src="/posts/projects/hedra-composer/audio-drag.mp4" autoPlay loop muted caption="Dragging audio onto the timeline with precise drop placement." />
+
+The timeline also has full undo/redo, a tiny version control system with commit and patch semantics, so dragging a clip commits one snapshot instead of flooding history with every intermediate frame of the drag.
+
+My favorite bucket of fixes was the unglamorous stuff: a context aware toolbar that follows your selection, click away to deselect, disabling Chrome's two finger history gesture over the timeline, and a small system to keep overlapping pointer events from fighting each other.
+
+## Conclusion & Learnings
+
+Building an editor in the browser is mostly a fight against the platform's defaults, canvas limits, gesture conflicts, event ordering, two clocks that refuse to agree. The generative angle made it worth it though. There's something really fun about an editor where the footage shows up while you're already cutting it.
