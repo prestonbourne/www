@@ -3,7 +3,8 @@ import { NextPageProps } from "@/lib/types";
 
 const ROUTE = "notes";
 
-export default function Page({ params }: NextPageProps) {
+export default async function Page(props: NextPageProps) {
+  const params = await props.params;
   return <PostListPage params={params} postType={ROUTE} />;
 }
 

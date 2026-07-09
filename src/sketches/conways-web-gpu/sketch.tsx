@@ -16,7 +16,7 @@ const Sketch: React.FC = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const mountCallback = async (canvasRef: RefObject<HTMLCanvasElement>) => {
+    const mountCallback = async (canvasRef: RefObject<HTMLCanvasElement | null>) => {
       const foundBrowserSupport = !!navigator.gpu;
       if (!foundBrowserSupport) {
         const errorMsg = "WebGPU not supported";

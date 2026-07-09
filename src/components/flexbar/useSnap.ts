@@ -2,9 +2,8 @@ import { useRef, useState, useCallback } from "react";
 import {
   BoundingBox,
   MotionProps,
-  DragHandlers,
   animate,
-  SpringOptions,
+  Transition,
   DragElastic,
 } from "framer-motion";
 
@@ -35,10 +34,10 @@ export type SnapOptions = {
    */
   power?: number;
   direction: "x" | "y" | "both";
-  ref: React.RefObject<HTMLElement>;
+  ref: React.RefObject<HTMLElement | null>;
   snapPoints: SnapPointsType;
-  springOptions?: Omit<SpringOptions, "velocity">;
-  constraints?: Partial<BoundingBox> | React.RefObject<Element>;
+  springOptions?: Omit<Transition, "velocity">;
+  constraints?: Partial<BoundingBox> | React.RefObject<Element | null>;
   dragElastic?: DragElastic;
   onDragStart?: MotionProps["onDragStart"];
   onDragEnd?: MotionProps["onDragEnd"];
@@ -195,7 +194,10 @@ export const useSnap = ({
   );
 
 
-  const onDragEndHandler: DragHandlers["onDragEnd"] = (event, info) => {
+  const onDragEndHandler: NonNullable<MotionProps["onDragEnd"]> = (
+    event,
+    info
+  ) => {
     onDragEnd?.(event, info);
 
     if (!ref.current) {

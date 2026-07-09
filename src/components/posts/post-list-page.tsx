@@ -2,9 +2,10 @@ import { HomeSection } from "@/components/home-section";
 import { getPostsByCategory } from "@/lib/posts";
 import { PostType } from "@/lib/types";
 import postTypes from "@/post-types.json";
-import { NextPageProps } from "@/lib/types";
+import { ResolvedPageParams } from "@/lib/types";
 
-type PostListPageProps = NextPageProps & {
+type PostListPageProps = {
+  params: ResolvedPageParams;
   postType: PostType;
 };
 

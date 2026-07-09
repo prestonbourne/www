@@ -221,7 +221,7 @@ function update(element: HTMLElement, info: TOCThumb): void {
 }
 
 type TOCThumbProps = HTMLAttributes<HTMLDivElement> & {
-  containerRef: RefObject<HTMLElement>;
+  containerRef: RefObject<HTMLElement | null>;
   active: string[];
 };
 

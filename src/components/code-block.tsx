@@ -21,7 +21,9 @@ export const extractLang = (className?: string) => {
   return match ? match[1] : "plaintext";
 };
 
-export const extractCodeEl = (children: ReactElement): ReactElement | null => {
+export const extractCodeEl = (
+  children: ReactElement<{ children?: ReactElement }>
+): ReactElement | null => {
   if (!children) {
     console.error("No children found", children);
     return null;
@@ -30,8 +32,10 @@ export const extractCodeEl = (children: ReactElement): ReactElement | null => {
     return children;
   }
 
-  if (children.type === "pre") {
-    return extractCodeEl(children.props.children);
+  if (children.type === "pre" && children.props.children) {
+    return extractCodeEl(
+      children.props.children as ReactElement<{ children?: ReactElement }>
+    );
   }
 
   console.error("No code block found", children);

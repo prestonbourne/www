@@ -37,12 +37,12 @@ const Sketch = {
 };
 
 const components: MDXComponents = {
-  h1: (props) => <Heading level={1} {...props} />,
-  h2: (props) => <Heading level={2} {...props} className="my-3" />,
-  h3: (props) => <Heading level={3} {...props} className="my-3" />,
-  h4: (props) => <Heading level={4} {...props} className="my-2" />,
-  h5: (props) => <Heading level={5} {...props} className="my-1" />,
-  h6: (props) => <Heading level={6} {...props} />,
+  h1: ({ ref, ...props }) => <Heading level={1} {...props} />,
+  h2: ({ ref, ...props }) => <Heading level={2} {...props} className="my-3" />,
+  h3: ({ ref, ...props }) => <Heading level={3} {...props} className="my-3" />,
+  h4: ({ ref, ...props }) => <Heading level={4} {...props} className="my-2" />,
+  h5: ({ ref, ...props }) => <Heading level={5} {...props} className="my-1" />,
+  h6: ({ ref, ...props }) => <Heading level={6} {...props} />,
   p: ({ className = "", ...rest }) => {
     return <Paragraph {...rest} className={cx(`mb-6`, className)} />;
   },
@@ -69,7 +69,9 @@ const components: MDXComponents = {
   Image,
   Video,
   PersonLink,
-  Sketch,
+  /* @types/mdx's NestedMDXComponents rejects React 19 component types for
+     nested objects like `Sketch`, but MDX supports them at runtime */
+  Sketch: Sketch as unknown as MDXComponents,
   // pre: async (props) => {
   //   const isElement = React.isValidElement(props.children);
   //   if (!isElement) {
@@ -95,7 +97,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
   };
 }
 
-export function MDX(props: JSX.IntrinsicAttributes & MDXRemoteProps) {
+export function MDX(props: React.JSX.IntrinsicAttributes & MDXRemoteProps) {
   return (
     <MDXRemote
       {...props}

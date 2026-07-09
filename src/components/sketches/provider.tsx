@@ -1,7 +1,7 @@
 "use client";
 import React, { createContext, useEffect, useState } from "react";
 import { Sketch, SketchLite } from "@/lib/sketches/types";
-import { getSketches } from "@/lib/sketches";
+import { getSketches } from "@/lib/sketches/getSketches";
 
 interface SketchContext {
   activeSketch: SketchLite | null;

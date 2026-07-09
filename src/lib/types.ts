@@ -2,9 +2,13 @@
     Nextjs does not have a built-in way to define types for server components
 */
 export interface NextPageProps<SlugType = string> {
-  params: { slug: SlugType };
-  searchParams?: { [key: string]: string | string[] | undefined };
+  params: Promise<{ slug: SlugType }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
+
+export type ResolvedPageParams<SlugType = string> = Awaited<
+  NextPageProps<SlugType>["params"]
+>;
 
 
 export type PostType = 'projects' | 'sketches' | 'notes';

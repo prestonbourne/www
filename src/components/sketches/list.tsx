@@ -1,6 +1,6 @@
 import { SketchItem } from "./item";
 import React from "react";
-import { getSketchesLite } from "@/lib/sketches/getSketches";
+import { getSketchesLite } from "@/lib/sketches/getSketchesLite";
 import { SketchProvider } from "./provider";
 import { SketchDialog } from "./dialog";
 

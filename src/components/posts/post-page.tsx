@@ -1,5 +1,5 @@
 import { formatISOToDate } from "@/lib/index";
-import { NextPageProps } from "@/lib/types";
+import { ResolvedPageParams } from "@/lib/types";
 import { TextWithIcon } from "@/components/text-with-icon";
 import { CalendarIcon, ClockIcon } from "@radix-ui/react-icons";
 import { Divider } from "@/components/divider";
@@ -11,7 +11,8 @@ import { PostType } from "@/lib/types";
 import { MDX } from "@/components/markdown";
 import { ViewCounter } from "./view-counter";
 
-type PostPageProps = NextPageProps & {
+type PostPageProps = {
+  params: ResolvedPageParams;
   postType: PostType;
 };
 

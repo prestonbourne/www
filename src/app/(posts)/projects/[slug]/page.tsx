@@ -8,6 +8,7 @@ const CURRENT_SLUG = "projects";
 export const generateMetadata = getGenerateMetadata(CURRENT_SLUG);
 export const generateStaticParams = getGenerateStaticParams(CURRENT_SLUG);
 
-export default async function Page({ params }: NextPageProps) {
+export default async function Page(props: NextPageProps) {
+  const params = await props.params;
   return <PostPage params={params} postType={CURRENT_SLUG} />;
 }

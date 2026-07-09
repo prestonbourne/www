@@ -14,7 +14,7 @@ const nextConfig = {
     // usually doesn't need to be changed but needed for MDX
     pageExtensions: ["js", "jsx", "ts", "tsx", "mdx"],
     images: {
-        domains: ["*"],
+        remotePatterns: [{ protocol: "https", hostname: "**" }],
     },
 };
 

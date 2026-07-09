@@ -8,7 +8,7 @@ type MetadataProps = NextPageProps & {
 };
 
 export async function generateMetadata({ params, postType }: MetadataProps) {
-  const currentSlug = params.slug;
+  const { slug: currentSlug } = await params;
   const post = getPostsByCategory(postType).find(
     (post) => post.slug === currentSlug
   );

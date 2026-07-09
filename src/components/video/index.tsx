@@ -2,7 +2,8 @@ import React, { ComponentProps } from "react";
 import { cx } from "class-variance-authority";
 import { ClientVideoProvider, ClientVideoDialog, ClientVideoClickTarget } from "./client";
 
-type VideoProps = ComponentProps<'video'> & {
+type VideoProps = Omit<ComponentProps<'video'>, 'src'> & {
+  src?: string;
   caption?: string;
 };
 

@@ -24,4 +24,6 @@ export const getResizer = (
 
 export const TWEAK_PANE_CONTAINER_ID = "tweak-container";
 
-export { getSketches } from "./getSketches";
+export { getSketchesLite, sketchIDs } from "./getSketchesLite";
+// getSketches is client-only (next/dynamic ssr:false) — import it directly
+// from "@/lib/sketches/getSketches" inside client components.
